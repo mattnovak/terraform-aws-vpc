@@ -5,12 +5,6 @@ resource "aws_security_group" "db" {
     name = "vpc_db"
     description = "Allow incoming database connections."
 
-    ingress { # SQL Server
-        from_port = 1433
-        to_port = 1433
-        protocol = "tcp"
-        security_groups = ["${aws_security_group.web.id}"]
-    }
     ingress { # MySQL
         from_port = 3306
         to_port = 3306
@@ -24,6 +18,7 @@ resource "aws_security_group" "db" {
         protocol = "tcp"
         cidr_blocks = ["${var.vpc_cidr}"]
     }
+
     ingress {
         from_port = -1
         to_port = -1
@@ -37,6 +32,7 @@ resource "aws_security_group" "db" {
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
+
     egress {
         from_port = 443
         to_port = 443
@@ -51,10 +47,10 @@ resource "aws_security_group" "db" {
     }
 }
 
-resource "aws_instance" "db-1" {
+resource "aws_instance" "mysql-1" {
     ami = "${lookup(var.amis, var.aws_region)}"
     availability_zone = "eu-west-1a"
-    instance_type = "m1.small"
+    instance_type = "t2.micro"
     key_name = "${var.aws_key_name}"
     vpc_security_group_ids = ["${aws_security_group.db.id}"]
     subnet_id = "${aws_subnet.eu-west-1a-private.id}"
