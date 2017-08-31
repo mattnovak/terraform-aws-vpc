@@ -47,13 +47,13 @@ resource "aws_security_group" "db" {
     }
 }
 
-resource "aws_instance" "mysql-1" {
+resource "aws_instance" "mysql" {
     ami = "${lookup(var.amis, var.aws_region)}"
-    availability_zone = "eu-west-1a"
+    availability_zone = "${var.default_az}"
     instance_type = "t2.micro"
     key_name = "${var.aws_key_name}"
     vpc_security_group_ids = ["${aws_security_group.db.id}"]
-    subnet_id = "${aws_subnet.eu-west-1a-private.id}"
+    subnet_id = "${aws_subnet.private.id}"
     source_dest_check = false
 
     tags {
